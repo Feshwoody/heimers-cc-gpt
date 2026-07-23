@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./companion.css";
+import "./commander.css";
 
 export const metadata: Metadata = {
   title: "Always Be Ready",

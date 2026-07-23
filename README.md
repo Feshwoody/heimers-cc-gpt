@@ -2,7 +2,7 @@
 
 Mission-Control-Dashboard für League-of-Legends-Duo-Sessions. Die Anwendung kombiniert ein lokal nutzbares MacroBoard, optionale Supabase-Realtime-Sessions und einen separaten Windows-Connector für die lokale League Live Client Data API.
 
-Version: **0.7.0**
+Version: **0.7.1**
 
 ## Installation
 
@@ -49,7 +49,7 @@ Antwort:
   "status": "ok",
   "supabase": true,
   "realtime": true,
-  "version": "0.7.0"
+  "version": "0.7.1"
 }
 ```
 
