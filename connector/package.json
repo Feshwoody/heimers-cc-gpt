@@ -1,12 +1,12 @@
 {
   "name": "macroboard-league-connector",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
     "mock": "tsx src/index.ts --mock",
-    "test": "tsx --test src/cli.test.ts",
+    "test": "tsx --test src/cli.test.ts src/normalize-game-data.test.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "production": "node dist/index.js"

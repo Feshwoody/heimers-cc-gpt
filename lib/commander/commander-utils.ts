@@ -1,3 +1,0 @@
-import type { NormalizedGameData } from "@/lib/realtime/types";
-type Player=NormalizedGameData["players"][number];
-export function commanderFlashUsers(game:NormalizedGameData,botlaneEnemy:string[]):Player[]{const enemies=game.players.filter(player=>player.team!==game.activePlayer.team),flashUsers=enemies.filter(player=>[player.summonerSpells.spell1,player.summonerSpells.spell2].includes("Flash"));return[...botlaneEnemy.map(name=>flashUsers.find(player=>player.championName===name)).filter((player):player is Player=>Boolean(player)),...flashUsers.filter(player=>!botlaneEnemy.includes(player.championName))].slice(0,4)}

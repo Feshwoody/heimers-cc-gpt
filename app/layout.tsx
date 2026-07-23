@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./companion.css";
 import "./commander.css";
+import "./commander-priority.css";
 import "./session-flow.css";
 import "./session-flow-overrides.css";
 

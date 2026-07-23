@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { activeMatchState } from "./match-state";
+import { getCanonicalMatchState } from "./canonical-match-state";
+import type { LivePlayer,NormalizedGameData,SharedState } from "./types";
+const player=(index:number,team:string):LivePlayer=>({playerId:`p${index}`,summonerName:`P${index}`,championName:`C${index}`,dataDragonKey:`C${index}`,team,isActivePlayer:index===0,summonerSpells:{spell1:index===7?"Smite":"Flash",spell2:"Ignite"},keystone:"",runes:[],level:1,items:[]});
+const game:NormalizedGameData={gameId:"g1",gameTime:210,gameMode:"CLASSIC",mapName:"Summoner's Rift",updatedAt:new Date().toISOString(),activePlayer:{summonerName:"P0",championName:"C0",level:1,team:"ORDER"},players:Array.from({length:10},(_,i)=>player(i,i<5?"ORDER":"CHAOS")),enemyPlayers:Array.from({length:5},(_,i)=>player(i+5,"CHAOS")),events:[]};
+const shared:SharedState={updatedAt:1,sourceMemberId:"connector",matchState:activeMatchState(game)};
+test("commander and companion consume the identical canonical match state",()=>{const commander=getCanonicalMatchState("ABC123",shared,"persisted"),companion=getCanonicalMatchState("ABC123",shared,"persisted");assert.deepEqual(commander,companion);assert.equal(commander.match.connectorStatus,"online");assert.equal(commander.live,true)});
+test("canonical state preserves all five enemies through persistence and realtime",()=>{for(const source of ["persisted","broadcast","reconnect"] as const)assert.equal(getCanonicalMatchState("ABC123",shared,source).enemyPlayerCount,5)});

@@ -9,7 +9,7 @@ export const waitingMatchState = (): AuthoritativeMatchState => ({
   liveMatchData: null,
 });
 
-export function activeMatchState(game: NormalizedGameData): AuthoritativeMatchState {
+export function activeMatchState(game: NormalizedGameData, previous?: AuthoritativeMatchState): AuthoritativeMatchState {
   return {
     gameId: game.gameId,
     gameTime: game.gameTime,
@@ -17,6 +17,8 @@ export function activeMatchState(game: NormalizedGameData): AuthoritativeMatchSt
     connectorStatus: "online",
     updatedAt: game.updatedAt,
     liveMatchData: game,
+    activeCall: previous?.gameId===game.gameId?previous.activeCall:undefined,
+    summonerTimers: previous?.gameId===game.gameId?previous.summonerTimers:[],
   };
 }
 
@@ -28,6 +30,8 @@ export function endedMatchState(previous: AuthoritativeMatchState | undefined, u
     connectorStatus: "offline",
     updatedAt,
     liveMatchData: previous?.liveMatchData ? { ...previous.liveMatchData, status: "ended", updatedAt } as NormalizedGameData : null,
+    activeCall: previous?.activeCall,
+    summonerTimers: previous?.summonerTimers,
   };
 }
 

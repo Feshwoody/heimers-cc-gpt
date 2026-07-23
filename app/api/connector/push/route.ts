@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   const previousMatch = previousShared.matchState as ReturnType<typeof activeMatchState> | undefined;
   const matchState = body.matchEnded
     ? endedMatchState(previousShared.matchState as never, updatedAt)
-    : activeMatchState({ ...body.normalizedGameData!, status: "active" } as NormalizedGameData);
+    : activeMatchState({ ...body.normalizedGameData!, status: "active" } as NormalizedGameData, previousMatch);
   const gameData = matchState.liveMatchData ?? { status: "ended", updatedAt };
   const isNewGame = changedGame(previousMatch, matchState);
   const { timers: _timers, missionEngine: _missionEngine, call: _call, botlaneEnemy: _botlaneEnemy, ...stableShared } = previousShared;

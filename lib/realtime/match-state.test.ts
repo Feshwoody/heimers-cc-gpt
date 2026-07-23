@@ -30,5 +30,5 @@ test("match end produces ended and stops live mode", () => {
 test("new game id is detected so old match UI can reset", () => assert.equal(changedGame(activeMatchState(game()), activeMatchState(game("game-2"))), true));
 test("commander and companion share canonical camelCase fields", () => {
   const state: AuthoritativeMatchState = activeMatchState(game());
-  assert.deepEqual(Object.keys(state), ["gameId", "gameTime", "phase", "connectorStatus", "updatedAt", "liveMatchData"]);
+  assert.deepEqual(Object.keys(state), ["gameId", "gameTime", "phase", "connectorStatus", "updatedAt", "liveMatchData", "activeCall", "summonerTimers"]);
 });

@@ -2,7 +2,7 @@
 
 Mission-Control-Dashboard für League-of-Legends-Duo-Sessions. Die Anwendung kombiniert ein lokal nutzbares MacroBoard, optionale Supabase-Realtime-Sessions und einen separaten Windows-Connector für die lokale League Live Client Data API.
 
-Version: **0.7.4**
+Version: **0.7.5**
 
 Der Matchzustand wird als autoritativer `shared_state.matchState` persistiert. Commander und Companion laden denselben Snapshot bei Join, Refresh und Reconnect; Realtime-Tabellenupdates beschleunigen die Übernahme, der bestehende Poll bleibt Fallback für verpasste Events.
 
@@ -51,7 +51,7 @@ Antwort:
   "status": "ok",
   "supabase": true,
   "realtime": true,
-  "version": "0.7.4"
+  "version": "0.7.5"
 }
 ```
 

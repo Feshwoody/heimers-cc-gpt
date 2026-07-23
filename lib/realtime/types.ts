@@ -2,11 +2,16 @@ export type MemberRole = "support" | "heimer" | "spectator";
 export type SessionMember = { memberId: string; displayName: string; role: MemberRole; onlineAt: string; connector?: boolean };
 export type DuoCall = { id: string; text: string; source: string; sourceMemberId: string; timestamp: number; acknowledgedBy: string[] };
 export type SharedTimer = { id: string; targetTimestamp: number | null; pausedRemaining: number; running: boolean; updatedAt: number; sourceMemberId: string };
+export type LivePlayer = {
+  playerId?:string; summonerName:string; championName:string; championId?:number; dataDragonKey?:string; team:string; isActivePlayer:boolean;
+  summonerSpells:{spell1:string;spell2:string}; keystone:string; runes:string[]; level:number; items:Array<string | { id:number;name:string }>;
+};
 export type NormalizedGameData = {
   gameId: string; gameTime: number; gameMode: string; mapName: string; updatedAt: string;
   status?: "active" | "ended";
   activePlayer: { summonerName: string; championName: string; level: number; team: string };
-  players: Array<{ summonerName: string; championName: string; team: string; isActivePlayer: boolean; summonerSpells: { spell1: string; spell2: string }; keystone: string; runes: string[]; level: number; items: Array<string | { id: number; name: string }> }>;
+  players: LivePlayer[];
+  enemyPlayers?: LivePlayer[];
   events: Array<{ name: string; time: number; killerName?: string; id?: string }>;
 };
 export type MissionEngineShared = {
@@ -26,6 +31,8 @@ export type AuthoritativeMatchState = {
   connectorStatus: ConnectorStatus;
   updatedAt: string | null;
   liveMatchData: NormalizedGameData | null;
+  activeCall?: DuoCall;
+  summonerTimers?: SharedTimer[];
 };
 export type MatchStateSource = "persisted" | "broadcast" | "reconnect";
 export type SharedState = { updatedAt: number; sourceMemberId: string; call?: DuoCall; timers?: SharedTimer[]; phase?: string; mode?: string; winCondition?: string; checks?: Record<string, boolean>; matchStartedAt?: number | null; botlaneEnemy?: string[]; missionEngine?: MissionEngineShared; matchState?: AuthoritativeMatchState };
