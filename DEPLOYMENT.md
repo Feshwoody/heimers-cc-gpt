@@ -102,10 +102,10 @@ Nach erfolgreichem Deployment:
 ## 8. Eigene Domain verbinden
 
 1. In Vercel `Project Settings > Domains` öffnen.
-2. Domain hinzufügen, zum Beispiel `macroboard.gg`.
+2. Domain `always-be-ready.de` hinzufügen.
 3. Die von Vercel geforderten DNS-Einträge beim Domainanbieter setzen.
 4. Auf erfolgreiche Verifikation und HTTPS-Zertifikat warten.
-5. `https://macroboard.gg/api/health` prüfen.
+5. `https://always-be-ready.de/api/health` prüfen.
 
 Es sind keine zusätzlichen Next.js-Rewrites nötig.
 
@@ -117,13 +117,13 @@ Auf dem Gaming-PC:
 cd connector
 npm install
 npm run build
-npm run production -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://macroboard.gg"
+npm run production -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://always-be-ready.de"
 ```
 
 Alternativ:
 
 ```powershell
-node dist/index.js --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://macroboard.gg"
+npx tsx src/index.ts --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://always-be-ready.de"
 ```
 
 Die URL muss die Web-App-Basisadresse sein. Der Connector ergänzt `/api/connector/push` selbst.

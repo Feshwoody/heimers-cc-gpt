@@ -18,7 +18,7 @@ export function SessionLobby() {
     if(e||!s){setError(e?.message??"Session konnte nicht erstellt werden.");setBusy(false);return}
     const {data:m,error:me}=await client.from("macroboard_members").insert({session_id:s.id,display_name:display,member_token:memberToken,role}).select("id").single();
     if(me||!m){setError(me?.message??"Mitglied konnte nicht erstellt werden.");setBusy(false);return}
-    saveIdentity(sessionCode,m.id,memberToken);sessionStorage.setItem(`macroboard-connector-${sessionCode}`,secret);router.push(`/session/${sessionCode}`);
+    saveIdentity(sessionCode,m.id,memberToken);sessionStorage.setItem(`macroboard-connector-${sessionCode}`,secret);router.push(`/session/${sessionCode}/commander`);
   };
   const join=async()=>{const client=getSupabaseBrowserClient();if(!client)return;setBusy(true);setError("");const normalized=code.toUpperCase().trim();
     const {data:s}=await client.from("macroboard_sessions").select("id,expires_at").eq("code",normalized).maybeSingle();

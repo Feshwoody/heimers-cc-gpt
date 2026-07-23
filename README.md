@@ -2,7 +2,7 @@
 
 Mission-Control-Dashboard für League-of-Legends-Duo-Sessions. Die Anwendung kombiniert ein lokal nutzbares MacroBoard, optionale Supabase-Realtime-Sessions und einen separaten Windows-Connector für die lokale League Live Client Data API.
 
-Version: **0.6.0**
+Version: **0.7.0**
 
 ## Installation
 
@@ -49,7 +49,7 @@ Antwort:
   "status": "ok",
   "supabase": true,
   "realtime": true,
-  "version": "0.6.0"
+  "version": "0.7.0"
 }
 ```
 
@@ -120,6 +120,24 @@ Deployment:
 
 ## Connector
 
+Nach dem Erstellen einer Online-Session sieht ausschließlich der Session-Owner den fertigen GS-Link, den lokal erzeugten QR-Code und einen kopierbaren Connector-Befehl. Der GS öffnet beziehungsweise scannt nur seinen Companion-Link; Session-Code und Connector-Secret müssen dort nicht eingegeben werden. Der Companion zeigt Calls und Objective-Missionen ohne Teams, Debugdaten oder Timersteuerung und kann nach einer Interaktion Ton sowie Display Wake Lock aktivieren.
+
+## Commander und Tablet Companion
+
+Die drei Ansichten teilen dieselbe Session:
+
+- `/session/CODE/commander` für Calls, Timer, Korrekturen und Debug
+- `/session/CODE/companion` als reduzierte GS-Empfangsansicht
+- `/session/CODE/full` für Entwicklung und Zuschauer
+
+Der Commander erstellt die Session und kopiert im Bereich „SESSION TEILEN“ den tokenfreien GS-Link oder lässt den QR-Code scannen. Beim ersten Öffnen bestätigt GS einmal seinen Anzeigenamen; Rolle und zufällig erzeugter Member-Token werden danach nur lokal in diesem Browser gespeichert. Nach einem Refresh öffnet die Companion-Route wieder dieselbe Rolle.
+
+Auf dem Tablet zuerst „TON AKTIVIEREN“ drücken. Optional können Display Wake Lock und Vollbild aktiviert werden. Wake Lock wird nach einem Sichtbarkeitswechsel erneut angefordert, sofern GS ihn zuvor eingeschaltet hat. Nicht unterstützte Browser laufen ohne diese Funktion weiter. Über das Browsermenü kann die PWA „Always Be Ready“ zum Home-Bildschirm hinzugefügt werden.
+
+Die Companion-Oberfläche kann ausschließlich Calls bestätigen; Timer-, Objective- und sonstige Shared-State-Aktionen werden im Client über die gespeicherte Rolle blockiert. Die vorhandenen MVP-RLS-Regeln erlauben anonymen Tabellenzugriff weiterhin relativ breit. Eine vollständig manipulationssichere serverseitige Rollenabsicherung erfordert künftig signierte RPCs oder authentifizierte Benutzer und ist nicht durch ausgeblendete UI allein gegeben.
+
+Die Parameter können alternativ über `MACROBOARD_SESSION_CODE`, `MACROBOARD_CONNECTOR_SECRET`, `MACROBOARD_URL` und `CONNECTOR_DISPLAY_NAME` gesetzt werden. CLI-Parameter haben Vorrang. Ohne konfigurierte Base-URL verwenden Web-Einladungen und Connector `https://always-be-ready.de`.
+
 Installation:
 
 ```powershell
@@ -131,19 +149,19 @@ npm run build
 Entwicklung:
 
 ```powershell
-npm run dev -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "http://localhost:3000"
+npm run dev -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://always-be-ready.de"
 ```
 
 Produktion:
 
 ```powershell
-npm run production -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://macroboard.gg"
+npm run production -- --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://always-be-ready.de"
 ```
 
 Direkter Start des kompilierten Connectors:
 
 ```powershell
-node dist/index.js --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://macroboard.gg"
+npx tsx src/index.ts --session N7K4PX --secret "CONNECTOR_SECRET" --url "https://always-be-ready.de"
 ```
 
 Mock-Modus aus dem Hauptprojekt:
@@ -175,7 +193,7 @@ Eine eigene Domain wird in Vercel unter `Project Settings > Domains` verbunden. 
 Beispiel:
 
 ```env
-MACROBOARD_URL=https://macroboard.gg
+MACROBOARD_URL=https://always-be-ready.de
 ```
 
 ## Troubleshooting
