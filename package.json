@@ -1,13 +1,13 @@
 {
   "name": "macroboard-heimers-cc-gpt",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "connector:mock": "npm --prefix connector run mock --",
-    "test": "tsx --test lib/mission/mission-engine.test.ts lib/realtime/permissions.test.ts lib/realtime/session-role.test.ts lib/commander/commander-utils.test.ts lib/commander/match-ui-state.test.ts lib/commander/layout-contract.test.ts lib/session-management.test.ts && npm --prefix connector test"
+    "test": "tsx --test lib/mission/mission-engine.test.ts lib/realtime/permissions.test.ts lib/realtime/session-role.test.ts lib/realtime/match-state.test.ts lib/commander/commander-utils.test.ts lib/commander/match-ui-state.test.ts lib/commander/layout-contract.test.ts lib/session-management.test.ts && npm --prefix connector test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.52.1",

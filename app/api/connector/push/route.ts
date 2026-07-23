@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { sha256 } from "@/lib/session-utils";
 import type { NormalizedGameData } from "@/lib/realtime/types";
+import { activeMatchState, changedGame, endedMatchState } from "@/lib/realtime/match-state";
 
 const attempts = new Map<string, { count: number; reset: number }>();
 const MAX_BYTES = 180_000;
@@ -22,8 +23,17 @@ export async function POST(request: NextRequest) {
   if (new Date(session.expires_at).getTime() <= now) return NextResponse.json({ error: "session_expired" }, { status: 410 });
   const expected = (session.shared_state as { connectorSecretHash?: string })?.connectorSecretHash;
   if (!expected || await sha256(body.connectorSecret) !== expected) return NextResponse.json({ error: "invalid_connector_secret" }, { status: 401 });
-  const gameData = body.matchEnded ? { status: "ended", updatedAt: new Date().toISOString() } : { ...body.normalizedGameData, status: "active" };
-  const { error } = await client.from("macroboard_sessions").update({ game_data: gameData, updated_at: new Date().toISOString() }).eq("id", session.id);
+  const updatedAt = new Date().toISOString();
+  const previousShared = (session.shared_state ?? {}) as Record<string, unknown>;
+  const previousMatch = previousShared.matchState as ReturnType<typeof activeMatchState> | undefined;
+  const matchState = body.matchEnded
+    ? endedMatchState(previousShared.matchState as never, updatedAt)
+    : activeMatchState({ ...body.normalizedGameData!, status: "active" } as NormalizedGameData);
+  const gameData = matchState.liveMatchData ?? { status: "ended", updatedAt };
+  const isNewGame = changedGame(previousMatch, matchState);
+  const { timers: _timers, missionEngine: _missionEngine, call: _call, botlaneEnemy: _botlaneEnemy, ...stableShared } = previousShared;
+  const sharedState = { ...(isNewGame ? stableShared : previousShared), matchState, updatedAt: now, sourceMemberId: "connector" };
+  const { error } = await client.from("macroboard_sessions").update({ game_data: gameData, shared_state: sharedState, updated_at: updatedAt }).eq("id", session.id);
   if (error) return NextResponse.json({ error: "update_failed" }, { status: 500 });
   await client.from("macroboard_events").insert({ session_id: session.id, source: "connector", event_type: body.matchEnded ? "match_ended" : "game_data", payload: { updatedAt: gameData.updatedAt }, game_time_seconds: body.normalizedGameData ? Math.floor(body.normalizedGameData.gameTime) : null });
   return NextResponse.json({ ok: true });

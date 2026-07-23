@@ -2,14 +2,15 @@
 import { useEffect,useMemo,useRef,useState } from "react";
 import { DEFAULT_MISSION_SETTINGS } from "@/lib/mission/objective-config";
 import { runMissionEngine } from "@/lib/mission/mission-engine";
-import type { DuoCall,NormalizedGameData,SessionMember,SharedState } from "@/lib/realtime/types";
+import type { AuthoritativeMatchState,DuoCall,MatchStateSource,NormalizedGameData,SessionMember,SharedState } from "@/lib/realtime/types";
 import { useAudioUnlock } from "@/hooks/useAudioUnlock";
 import { useScreenWakeLock } from "@/hooks/useScreenWakeLock";
 import { useVibration } from "@/hooks/useVibration";
 type Status="online"|"stale"|"offline"|"ended";
 const clock=(seconds:number)=>`${String(Math.floor(Math.max(0,seconds)/60)).padStart(2,"0")}:${String(Math.max(0,seconds)%60).padStart(2,"0")}`;
-export function CompanionView({code,call,game,shared,sessionState,members,connectorStatus,connected,botlaneEnemy,onAck,onReconnect,onLeave}:{code:string;call?:DuoCall;game?:NormalizedGameData;shared?:SharedState["missionEngine"];sessionState?:SharedState;members:SessionMember[];connectorStatus:Status;connected:boolean;botlaneEnemy:string[];onAck:()=>void;onReconnect:()=>void;onLeave:()=>void}){
+export function CompanionView({code,call,game,shared,sessionState,matchState,matchSource,members,connectorStatus,connected,botlaneEnemy,onAck,onReconnect,onLeave}:{code:string;call?:DuoCall;game?:NormalizedGameData;shared?:SharedState["missionEngine"];sessionState?:SharedState;matchState:AuthoritativeMatchState;matchSource:MatchStateSource;members:SessionMember[];connectorStatus:Status;connected:boolean;botlaneEnemy:string[];onAck:()=>void;onReconnect:()=>void;onLeave:()=>void}){
   const audio=useAudioUnlock(),wake=useScreenWakeLock(),vibration=useVibration(),lastMission=useRef(""),[feedback,setFeedback]=useState(false);
+  useEffect(()=>{if(process.env.NODE_ENV==="production")return;const debug=document.createElement("small");debug.className="companion-match-debug";debug.textContent=`COMPANION MATCH STATE: gameId ${matchState.gameId??"–"} · gameTime ${matchState.gameTime??"–"} · phase ${matchState.phase} · updatedAt ${matchState.updatedAt??"–"} · Quelle ${matchSource}`;document.body.appendChild(debug);return()=>debug.remove()},[matchSource,matchState]);
   const output=useMemo(()=>game?runMissionEngine({gameId:game.gameId,gameTime:game.gameTime,gameMode:game.gameMode,mapName:game.mapName,connectorStatus,events:game.events,manualMission:call?{id:call.id,title:call.text,sourceName:call.source,createdAt:call.timestamp,acknowledged:call.acknowledgedBy.length>0}:undefined,overrides:shared?.gameId===game.gameId?shared.overrides:{},settings:DEFAULT_MISSION_SETTINGS}):undefined,[call,connectorStatus,game,shared]),mission=output?.mission;
   useEffect(()=>{const button=document.createElement("button");button.className="companion-leave";button.textContent="SESSION VERLASSEN";button.addEventListener("click",onLeave);document.body.appendChild(button);return()=>button.remove()},[onLeave]);
   useEffect(()=>{if(!mission||lastMission.current===mission.id)return;lastMission.current=mission.id;const urgent=mission.severity==="urgent"||mission.severity==="live";audio.play(urgent);vibration.vibrate(urgent)},[audio,vibration,mission]);
