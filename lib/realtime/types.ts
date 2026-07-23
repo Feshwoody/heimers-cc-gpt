@@ -1,0 +1,11 @@
+export type MemberRole = "support" | "heimer" | "spectator";
+export type SessionMember = { memberId: string; displayName: string; role: MemberRole; onlineAt: string; connector?: boolean };
+export type DuoCall = { id: string; text: string; source: string; sourceMemberId: string; timestamp: number; acknowledgedBy: string[] };
+export type SharedTimer = { id: string; targetTimestamp: number | null; pausedRemaining: number; running: boolean; updatedAt: number; sourceMemberId: string };
+export type NormalizedGameData = {
+  gameId: string; gameTime: number; gameMode: string; mapName: string; updatedAt: string;
+  activePlayer: { summonerName: string; championName: string; level: number; team: string };
+  players: Array<{ summonerName: string; championName: string; team: string; isActivePlayer: boolean; summonerSpells: { spell1: string; spell2: string }; keystone: string; runes: string[]; level: number; items: Array<string | { id: number; name: string }> }>;
+  events: Array<{ name: string; time: number }>;
+};
+export type SharedState = { updatedAt: number; sourceMemberId: string; call?: DuoCall; timers?: SharedTimer[]; phase?: string; mode?: string; winCondition?: string; checks?: Record<string, boolean>; matchStartedAt?: number | null; botlaneEnemy?: string[] };

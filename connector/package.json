@@ -1,0 +1,18 @@
+{
+  "name": "macroboard-league-connector",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "mock": "tsx src/index.ts --mock",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "production": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

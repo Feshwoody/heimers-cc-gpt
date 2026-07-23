@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+connector/node_modules/
+
+# Next.js / build output
+.next/
+out/
+dist/
+connector/dist/
+*.tsbuildinfo
+
+# Environment files and secrets
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+!.env.example
+!.env.local.example
+!.env.production.example
+!connector/.env.example
+
+# Vercel
+.vercel/
+
+# Local Codex and workspace state
+.agents/
+.codex/
+work/
+outputs/
+
+# Logs, caches and OS/editor files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+coverage/
+
+# Optional packaged connector binaries
+connector/release/
+*.exe

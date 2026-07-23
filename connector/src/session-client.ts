@@ -1,0 +1,2 @@
+import type { NormalizedGameData } from "./types.js";
+export async function pushGameData(url:string,sessionCode:string,secret:string,data?:NormalizedGameData,matchEnded=false){const response=await fetch(`${url.replace(/\/$/,"")}/api/connector/push`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({sessionCode,connectorSecret:secret,normalizedGameData:data,matchEnded}),signal:AbortSignal.timeout(5000)});if(!response.ok){const detail=await response.json().catch(()=>({}));throw new Error(`${response.status}:${detail.error??"push_failed"}`)}}

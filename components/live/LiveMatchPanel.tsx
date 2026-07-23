@@ -1,0 +1,7 @@
+import type { NormalizedGameData } from "@/lib/realtime/types";
+import { DataDragonIcon } from "./DataDragonIcon";
+const pad=(n:number)=>String(n).padStart(2,"0");const clock=(s:number)=>`${pad(Math.floor(s/60))}:${pad(Math.floor(s%60))}`;
+export function LiveMatchPanel({game,age,status}:{game?:NormalizedGameData;age:number;status:"waiting"|"online"|"stale"|"ended"}) {
+  const active=game?.players?.find(p=>p.isActivePlayer)||game?.players?.find(p=>p.summonerName===game.activePlayer?.summonerName);
+  return <section className={`live-match-panel live-${status}`}><div className="live-compact"><div><span>LIVE MATCH</span><h2>{status==="waiting"?"LEAGUE WARTET":status==="ended"?"MATCH BEENDET":status==="stale"?"VERBINDUNG VERALTET":"MATCH ERKANNT"}</h2></div><strong>{game?.gameTime!==undefined?clock(game.gameTime):"--:--"}</strong>{game&&status!=="ended"&&<div className="active-player"><DataDragonIcon type="champion" name={game.activePlayer.championName}/><div><span>AKTIVER SPIELER</span><b>{game.activePlayer.championName} · LVL {game.activePlayer.level}</b><em>{active?.summonerSpells.spell1} · {active?.summonerSpells.spell2} · {active?.keystone||"Keine Rune"}</em></div></div>}</div>{game&&status!=="ended"&&<div className="live-status-row"><span>{game.gameMode||"–"}</span><span>{game.mapName||"–"}</span><span>UPDATE VOR {age} SEK.</span><span>{game.activePlayer.summonerName}</span></div>}</section>;
+}

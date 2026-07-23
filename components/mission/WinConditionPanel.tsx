@@ -1,0 +1,3 @@
+export function WinConditionPanel({winCon,mode,target,avoid,setTarget,setAvoid}:{winCon:string;mode:"ENGAGE"|"PEEL";target:string;avoid:string;setTarget:(s:string)=>void;setAvoid:(s:string)=>void}) {
+  return <section className="win-panel"><div className="win-label">WIN CONDITION</div><div className="win-grid"><div><span>SPIEL ÜBER</span><strong>{winCon.toUpperCase()}</strong></div><div><span>AUFGABE</span><strong className={mode==="PEEL"?"text-emerald-400":"text-orange-400"}>{mode}</strong></div><label><span>TARGET</span><input value={target} onChange={e=>setTarget(e.target.value)} /></label><label><span>NICHT</span><input value={avoid} onChange={e=>setAvoid(e.target.value)} /></label></div></section>;
+}
