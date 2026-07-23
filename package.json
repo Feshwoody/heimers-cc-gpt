@@ -1,12 +1,13 @@
 {
   "name": "macroboard-heimers-cc-gpt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "connector:mock": "npm --prefix connector run mock --"
+    "connector:mock": "npm --prefix connector run mock --",
+    "test": "tsx --test lib/mission/mission-engine.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.52.1",
@@ -21,6 +22,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }

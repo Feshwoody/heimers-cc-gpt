@@ -2,7 +2,7 @@
 
 Mission-Control-Dashboard für League-of-Legends-Duo-Sessions. Die Anwendung kombiniert ein lokal nutzbares MacroBoard, optionale Supabase-Realtime-Sessions und einen separaten Windows-Connector für die lokale League Live Client Data API.
 
-Version: **0.5.0**
+Version: **0.6.0**
 
 ## Installation
 
@@ -49,11 +49,30 @@ Antwort:
   "status": "ok",
   "supabase": true,
   "realtime": true,
-  "version": "0.5.0"
+  "version": "0.6.0"
 }
 ```
 
 `supabase` und `realtime` sind `false`, wenn die erforderlichen Variablen nicht gesetzt wurden.
+
+## Mission Engine V1
+
+Die Mission Engine ist eine reine, regelbasierte Auswertung der echten League-Spielzeit und der bereits normalisierten Live-Client-Events. Sie arbeitet ausschließlich in `CLASSIC` auf Summoner's Rift und erzeugt keine taktischen Aussagen aus Positionen.
+
+Zentrale Objective-Zeiten:
+
+- Dragon: erster Spawn 05:00, Respawn fünf Minuten nach erkanntem Kill
+- Void Grubs: einmalige Spawn-Mission bei 08:00
+- Rift Herald: einmalige Spawn-Mission bei 15:00
+- Baron Nashor: erster Spawn 20:00, Respawn sechs Minuten nach erkanntem Kill
+
+Manuelle Duo-Calls haben immer Vorrang. Objective-Zielzeiten, Korrekturen und bereits abgefeuerte Warnschwellen werden in der Duo-Session synchronisiert; die laufenden Countdowns berechnet jeder Browser lokal. Fehlende Kill-Events führen bewusst zu `RESPAWN UNKNOWN` statt zu einem geschätzten Respawn.
+
+Engine-Tests:
+
+```powershell
+npm test
+```
 
 ## Environment-Dateien
 

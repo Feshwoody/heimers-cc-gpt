@@ -1,0 +1,33 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { processObjectiveEvents, runMissionEngine } from "./mission-engine";
+import type { MissionEngineInput } from "./types";
+
+const base=(gameTime:number,extra:Partial<MissionEngineInput>={}):MissionEngineInput=>({gameId:"game-1",gameTime,gameMode:"CLASSIC",mapName:"Summoner's Rift",connectorStatus:"online",events:[],now:1_700_000_000_000,...extra});
+const missionAt=(time:number)=>runMissionEngine(base(time)).mission;
+
+test("3:00 returns normal lane mission",()=>assert.equal(missionAt(180)?.title,"LANE START"));
+test("3:30 returns dragon in 90",()=>assert.equal(missionAt(210)?.title,"DRACHE IN 1:30"));
+test("4:00 returns dragon in 60",()=>assert.equal(missionAt(240)?.title,"DRACHE IN 1:00"));
+test("4:30 returns dragon in 30",()=>assert.equal(missionAt(270)?.title,"DRACHE IN 0:30"));
+test("5:00 returns dragon live",()=>assert.equal(missionAt(300)?.title,"DRACHE LIVE"));
+test("6:00 returns grubs in 120",()=>assert.equal(missionAt(360)?.title,"VOID GRUBS IN 2:00"));
+test("6:30 returns grubs in 90",()=>assert.equal(missionAt(390)?.title,"VOID GRUBS IN 1:30"));
+test("7:30 returns grubs in 30",()=>assert.equal(missionAt(450)?.title,"VOID GRUBS IN 0:30"));
+test("8:00 returns grubs live",()=>assert.equal(missionAt(480)?.title,"VOID GRUBS LIVE"));
+test("13:00 returns herald in 120",()=>assert.equal(missionAt(780)?.title,"RIFT HERALD IN 2:00"));
+test("13:30 returns herald in 90",()=>assert.equal(missionAt(810)?.title,"RIFT HERALD IN 1:30"));
+test("14:30 returns herald in 30",()=>assert.equal(missionAt(870)?.title,"RIFT HERALD IN 0:30"));
+test("15:00 returns herald live",()=>assert.equal(missionAt(900)?.title,"RIFT HERALD LIVE"));
+test("18:00 returns baron in 120",()=>assert.equal(missionAt(1080)?.title,"BARON IN 2:00"));
+test("18:30 returns baron in 90",()=>assert.equal(missionAt(1110)?.title,"BARON IN 1:30"));
+test("19:30 returns baron in 30",()=>assert.equal(missionAt(1170)?.title,"BARON IN 0:30"));
+test("20:00 returns baron live",()=>assert.equal(missionAt(1200)?.title,"BARON LIVE"));
+test("DragonKill 7:10 creates respawn 12:10",()=>{const out=runMissionEngine(base(500,{events:[{name:"DragonKill",time:430,id:"d1"}]}));assert.equal(out.objectives.find(x=>x.type==="dragon")?.targetTime,730)});
+test("BaronKill 24:20 creates respawn 30:20",()=>{const out=runMissionEngine(base(1500,{events:[{name:"BaronKill",time:1460,id:"b1"}]}));assert.equal(out.objectives.find(x=>x.type==="baron")?.targetTime,1820)});
+test("manual mission overrides automatic",()=>{const out=runMissionEngine(base(270,{manualMission:{id:"call",title:"MID SS",sourceName:"Supp",createdAt:1_700_000_000_000}}));assert.equal(out.mission?.title,"MID SS")});
+test("acknowledged manual mission restores automatic",()=>{const out=runMissionEngine(base(270,{manualMission:{id:"call",title:"MID SS",sourceName:"Supp",createdAt:1_700_000_000_000,acknowledged:true}}));assert.equal(out.mission?.title,"DRACHE IN 0:30")});
+test("new game id produces independent output",()=>{const a=runMissionEngine(base(270));const b=runMissionEngine({...base(270),gameId:"game-2"});assert.notEqual(a.gameId,b.gameId);assert.deepEqual(b.processedEventIds,[])});
+test("duplicate events are ignored",()=>{const event={name:"DragonKill",time:430,killerName:"A"};const out=processObjectiveEvents([event,event]);assert.equal(out.kills.length,1)});
+test("missing events remain stable",()=>{const out=runMissionEngine(base(2000));assert.ok(out.mission);assert.equal(out.processedEventIds.length,0)});
+test("unsupported map disables engine",()=>{const out=runMissionEngine(base(200,{gameMode:"ARAM",mapName:"Howling Abyss"}));assert.equal(out.supported,false);assert.equal(out.mission,undefined)});

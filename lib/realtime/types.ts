@@ -6,6 +6,14 @@ export type NormalizedGameData = {
   gameId: string; gameTime: number; gameMode: string; mapName: string; updatedAt: string;
   activePlayer: { summonerName: string; championName: string; level: number; team: string };
   players: Array<{ summonerName: string; championName: string; team: string; isActivePlayer: boolean; summonerSpells: { spell1: string; spell2: string }; keystone: string; runes: string[]; level: number; items: Array<string | { id: number; name: string }> }>;
-  events: Array<{ name: string; time: number }>;
+  events: Array<{ name: string; time: number; killerName?: string; id?: string }>;
 };
-export type SharedState = { updatedAt: number; sourceMemberId: string; call?: DuoCall; timers?: SharedTimer[]; phase?: string; mode?: string; winCondition?: string; checks?: Record<string, boolean>; matchStartedAt?: number | null; botlaneEnemy?: string[] };
+export type MissionEngineShared = {
+  gameId: string;
+  overrides?: Record<string, { mode: "auto"|"manual"|"taken"|"irrelevant"; targetTime?: number; updatedAt: number }>;
+  firedWarnings?: string[];
+  activeMissionId?: string;
+  objectiveTargets?: Partial<Record<"dragon"|"grubs"|"herald"|"baron", number>>;
+  objectiveKills?: Array<{ objective: string; eventId: string; killTime: number; respawnTime?: number }>;
+};
+export type SharedState = { updatedAt: number; sourceMemberId: string; call?: DuoCall; timers?: SharedTimer[]; phase?: string; mode?: string; winCondition?: string; checks?: Record<string, boolean>; matchStartedAt?: number | null; botlaneEnemy?: string[]; missionEngine?: MissionEngineShared };
