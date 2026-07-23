@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { getMatchUiState,shouldResetForGame } from "./match-ui-state";
+const now=1_800_000_000_000;
+test("prematch has no active countdown state",()=>assert.equal(getMatchUiState(undefined,now),"prematch"));
+test("valid connector data switches to ingame",()=>assert.equal(getMatchUiState({gameId:"game-1",gameTime:210,updatedAt:new Date(now).toISOString(),status:"active"},now),"ingame"));
+test("data becomes stale after ten seconds",()=>assert.equal(getMatchUiState({gameId:"game-1",gameTime:270,updatedAt:new Date(now-10_001).toISOString()},now),"stale"));
+test("reconnect returns stale state to ingame",()=>assert.equal(getMatchUiState({gameId:"game-1",gameTime:271,updatedAt:new Date(now).toISOString()},now),"ingame"));
+test("match end produces ended state",()=>assert.equal(getMatchUiState({gameId:"game-1",gameTime:1800,updatedAt:new Date(now).toISOString(),status:"ended"},now),"ended"));
+test("new game id requests an ingame reset",()=>{assert.equal(shouldResetForGame("game-1","game-2"),true);assert.equal(shouldResetForGame("game-1","game-1"),false)});

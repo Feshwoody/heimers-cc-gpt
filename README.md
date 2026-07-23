@@ -2,7 +2,7 @@
 
 Mission-Control-Dashboard für League-of-Legends-Duo-Sessions. Die Anwendung kombiniert ein lokal nutzbares MacroBoard, optionale Supabase-Realtime-Sessions und einen separaten Windows-Connector für die lokale League Live Client Data API.
 
-Version: **0.7.1**
+Version: **0.7.2**
 
 ## Installation
 
@@ -49,7 +49,7 @@ Antwort:
   "status": "ok",
   "supabase": true,
   "realtime": true,
-  "version": "0.7.1"
+  "version": "0.7.2"
 }
 ```
 
@@ -135,6 +135,17 @@ Der Commander erstellt die Session und kopiert im Bereich „SESSION TEILEN“ d
 Auf dem Tablet zuerst „TON AKTIVIEREN“ drücken. Optional können Display Wake Lock und Vollbild aktiviert werden. Wake Lock wird nach einem Sichtbarkeitswechsel erneut angefordert, sofern GS ihn zuvor eingeschaltet hat. Nicht unterstützte Browser laufen ohne diese Funktion weiter. Über das Browsermenü kann die PWA „Always Be Ready“ zum Home-Bildschirm hinzugefügt werden.
 
 Die Companion-Oberfläche kann ausschließlich Calls bestätigen; Timer-, Objective- und sonstige Shared-State-Aktionen werden im Client über die gespeicherte Rolle blockiert. Die vorhandenen MVP-RLS-Regeln erlauben anonymen Tabellenzugriff weiterhin relativ breit. Eine vollständig manipulationssichere serverseitige Rollenabsicherung erfordert künftig signierte RPCs oder authentifizierte Benutzer und ist nicht durch ausgeblendete UI allein gegeben.
+
+### Dynamische Commander-Oberfläche
+
+Die Commander-Route unterscheidet automatisch vier Zustände:
+
+- `prematch`: Session-Links, QR-Code und Connector-Befehl stehen im Vordergrund.
+- `ingame`: gültige Connector-Daten mit `gameId` und `gameTime` öffnen ohne Reload das kompakte Control Deck.
+- `stale`: nach mehr als zehn Sekunden bleiben die letzten Daten sichtbar, Countdowns werden aber als nicht aktuell markiert.
+- `ended`: Missionen und Warnungen stoppen; „NEUES MATCH“ kehrt in den Prematch-Zustand zurück.
+
+Ein neuer `gameId` setzt matchbezogene Flash-Timer zurück. Kurze Connector-Unterbrechungen verursachen dagegen keinen Layout-Reset. Ein erneuter Klick auf einen laufenden Flash-Timer öffnet die Korrektur für `+30`, `-30` oder einen direkten Sekundenwert.
 
 Die Parameter können alternativ über `MACROBOARD_SESSION_CODE`, `MACROBOARD_CONNECTOR_SECRET`, `MACROBOARD_URL` und `CONNECTOR_DISPLAY_NAME` gesetzt werden. CLI-Parameter haben Vorrang. Ohne konfigurierte Base-URL verwenden Web-Einladungen und Connector `https://always-be-ready.de`.
 
